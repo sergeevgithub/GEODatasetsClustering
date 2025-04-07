@@ -1,0 +1,13 @@
+name: geo-clustering
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - flask
+  - requests
+  - beautifulsoup4
+  - pandas
+  - scikit-learn
+  - plotly
+  - pip

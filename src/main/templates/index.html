@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GEO Clustering</title>
+</head>
+<body>
+    <h2>Upload PMIDs</h2>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".txt" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if plot_kmeans_2d %}
+    <h3>KMeans (2D)</h3>
+    <div>{{ plot_kmeans_2d | safe }}</div>
+
+    <h3>HDBSCAN (2D)</h3>
+    <div>{{ plot_hdbscan_2d | safe }}</div>
+
+    <h3>KMeans (3D)</h3>
+    <div>{{ plot_kmeans_3d | safe }}</div>
+
+    <h3>HDBSCAN (3D)</h3>
+    <div>{{ plot_hdbscan_3d | safe }}</div>
+    {% endif %}
+</body>
+</html>
