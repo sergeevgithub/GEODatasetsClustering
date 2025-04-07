@@ -1,6 +1,10 @@
 # 🧬 GEO Dataset Clustering Web Service
 
-This project is a **Flask-based web service** that accepts a list of PMIDs (PubMed IDs), retrieves metadata of associated GEO datasets, processes their textual summaries, performs clustering based on text similarity, and generates interactive 2D and 3D visualizations.
+This project is a **Flask-based web service** that accepts a list of PMIDs (PubMed IDs), 
+retrieves metadata of associated GEO datasets, 
+processes their textual summaries, 
+performs clustering based on text similarity, 
+and generates interactive 2D and 3D visualizations.
 
 ---
 
