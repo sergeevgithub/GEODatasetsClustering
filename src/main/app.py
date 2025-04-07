@@ -12,8 +12,7 @@ def upload():
     file = request.files['file']
     content = file.read().decode('utf-8')
     pmids = [pmid.strip() for pmid in content.replace('\n', ',').split(',') if pmid.strip()]
-    print(pmids)
 
-    # plots = process_pmids(pmids)  # returns dictionary of plots
+    plots = process_pmids(pmids)  # returns dictionary of plots
 
-    # return render_template('index.html', **plots)
+    return render_template('index.html', **plots)
