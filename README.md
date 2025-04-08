@@ -33,7 +33,7 @@ and generates interactive 2D and 3D visualizations.
    ```
 3. Run the application:
    ```
-   python app.py
+   flask --app app run
    ```
 4. Then open your browser and visit:
    ```
