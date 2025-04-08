@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, HDBSCAN
@@ -22,6 +21,7 @@ def fetch_geo_metadata(pmids):
 
     r = requests.get(elink_url, params=params).json()
     geo_ids = r['linksets'][0]['linksetdbs'][0]['links']
+    print(f'Fetched {len(geo_ids)} links')
 
     esummary_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
     params2 = {
@@ -64,7 +64,7 @@ def fetch_geo_metadata(pmids):
     return pd.DataFrame(data)
 
 
-def cluster_and_plot(df):
+def vectorize_and_cluster(df):
     vectorizer = TfidfVectorizer(
         lowercase=True,
         max_df=0.9,
@@ -74,22 +74,23 @@ def cluster_and_plot(df):
     )
     tfidf_matrix = vectorizer.fit_transform(df['contents'])
 
-    pca_2d = PCA(n_components=2).fit_transform(tfidf_matrix)
-    pca_3d = PCA(n_components=3).fit_transform(tfidf_matrix)
-
     # KMeans
     tfidf_matrix_normalized = normalize(tfidf_matrix)
-    kmeans = KMeans(n_clusters=2, random_state=42).fit(tfidf_matrix_normalized)
-    df['kmeans_label'] = kmeans.labels_
+    df['kmeans_label'] = KMeans(n_clusters=2, random_state=42).fit_predict(tfidf_matrix_normalized)
 
     # HDBSCAN
-    hdb = HDBSCAN(min_cluster_size=8, min_samples=3, metric='cosine', random_state=42).fit(tfidf_matrix)
-    df['hdb_label'] = hdb.labels_
+    df['hdb_label'] = HDBSCAN(min_cluster_size=8, min_samples=3, metric='cosine').fit_predict(tfidf_matrix)
 
+    pca_2d = PCA(n_components=2).fit_transform(tfidf_matrix)
+    pca_3d = PCA(n_components=3).fit_transform(tfidf_matrix)
     df['x_2d'], df['y_2d'] = pca_2d[:, 0], pca_2d[:, 1]
     df['x_3d'], df['y_3d'], df['z_3d'] = pca_3d[:, 0], pca_3d[:, 1], pca_3d[:, 2]
 
-    plot_dict = {}
+    return df
+
+
+def get_plots(df):
+    plot_dict = dict()
 
     plot_dict['plot_kmeans_2d'] = px.scatter(df, x='x_2d', y='y_2d', color=df['kmeans_label'].astype(str),
                                              hover_data=['pmids', 'gse_id']).to_html(full_html=False)
@@ -104,5 +105,5 @@ def cluster_and_plot(df):
 
 def process_pmids(pmids):
     df = fetch_geo_metadata(pmids)
-    plots = cluster_and_plot(df)
+    plots = get_plots(vectorize_and_cluster(df))
     return plots
