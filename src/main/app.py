@@ -13,6 +13,6 @@ def upload():
     content = file.read().decode('utf-8')
     pmids = [pmid.strip() for pmid in content.replace('\n', ',').split(',') if pmid.strip()]
 
-    plots = process_pmids(pmids)  # returns dictionary of plots
+    plots = process_pmids(pmids)
 
     return render_template('index.html', **plots)
