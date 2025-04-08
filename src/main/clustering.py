@@ -65,6 +65,7 @@ def fetch_geo_metadata(pmids):
 
 
 def vectorize_and_cluster(df):
+    print('Vectorizing...')
     vectorizer = TfidfVectorizer(
         lowercase=True,
         max_df=0.9,
@@ -73,10 +74,10 @@ def vectorize_and_cluster(df):
         stop_words='english',
     )
     tfidf_matrix = vectorizer.fit_transform(df['contents'])
-
+    print('Clustering...')
     # KMeans
     tfidf_matrix_normalized = normalize(tfidf_matrix)
-    df['kmeans_label'] = KMeans(n_clusters=2, random_state=42).fit_predict(tfidf_matrix_normalized)
+    df['kmeans_label'] = KMeans(n_clusters=2, init='k-means++', random_state=42, n_init=10).fit_predict(tfidf_matrix_normalized)
 
     # HDBSCAN
     df['hdb_label'] = HDBSCAN(min_cluster_size=8, min_samples=3, metric='cosine').fit_predict(tfidf_matrix)
@@ -90,6 +91,7 @@ def vectorize_and_cluster(df):
 
 
 def get_plots(df):
+    print('Plotting...')
     plot_dict = dict()
 
     plot_dict['plot_kmeans_2d'] = px.scatter(df, x='x_2d', y='y_2d', color=df['kmeans_label'].astype(str),
