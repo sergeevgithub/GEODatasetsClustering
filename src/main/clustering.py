@@ -105,6 +105,7 @@ def get_plots(df):
 
     return plot_dict
 
+
 def process_pmids(pmids):
     df = fetch_geo_metadata(pmids)
     plots = get_plots(vectorize_and_cluster(df))
